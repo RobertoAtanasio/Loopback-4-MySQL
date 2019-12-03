@@ -1,0 +1,124 @@
+lb4 model
+
+lb4 datasource
+
+lb4 repository
+
+lb4 controller
+
+  ? Controller class name: Product
+
+  ? What kind of controller would you like to generate?
+    Empty Controller
+  > REST Controller with CRUD functions
+
+  ? What is the name of the model to use with this CRUD repository? (Use arrow keys)
+  > Product
+
+  ? What is the name of your CRUD repository? (Use arrow keys)
+  > ProductRepository
+
+  ? What is the name of ID property? (id)
+
+  ? Is the id omitted when creating a new instance? No
+
+  ? What is the base HTTP path name of the CRUD operations? (/products)
+
+Para executar:
+  npm start
+  npm run dev
+
+Conectando com MySQL:
+---------------------
+
+1. Criar schema do banco;
+2. Em migrate.ts, alterar await app.migrateSchema({existingSchema}); para
+   incluir o model de Student
+   await app.migrateSchema({existingSchema, models: ['Student']});
+3. executar npm run build
+4. executar npm run migrate
+
+Obs.: quando da criação da tabela Address criar manualmente a FK e Índice:
+  ALTER TABLE lb_demo_db.address
+  ADD FOREIGN KEY (studentId) REFERENCES lb_demo_db.Student(id);
+
+  ALTER TABLE lb_demo_db.address ADD UNIQUE INDEX addressIndex (studentId);
+
+Para criar relação entre dois models (tabelas):
+-----------------------------------------------
+
+1. lb4 relation
+
+
+
+Associações entre as tabelas utilizadas no Curso
+================================================
+
+# HasMany
+
+A hasMany relation denotes a one-to-many connection of a model to another model through referential integrity.
+
+## One to Many Relationship
+
+_A student can take many courses_
+
+**Source model: Course** <br>
+**Target model: Student**
+
+_Student model will have the primary key of Course model as foriegn key_
+
+---
+
+# belongsTo
+
+A belongsTo relation denotes a many-to-one connection of a model to another model through referential integrity.
+
+## One to Many Relationship
+
+_Many students can belongs to one department_
+
+**Source model: Student** <br>
+**Target model: Department**
+
+_Student model will have the primary key of Department model as foriegn key_
+
+## hasOne
+
+A hasOne relation denotes a one-to-one connection of a model to another model through referential integrity.
+
+_A Student can only have one Address_
+
+### Steps
+
+1. Create HasOne Relation
+2. Add BelongsTo Relation
+3. Setup Database
+4. Configure relation with Source Repository
+5. Add Controller for one to one relation
+
+
+# Authentication
+----------------
+
+**Authentication is a process of verifying someone’s identity before a protected resource is accessed.**
+
+**Authorization is a process of deciding if a user can perform an action on a protected resource.**
+
+LoopBack 4 has an authentication package @loopback/authentication which allows you to secure your application’s API endpoints with custom authentication strategies and an @authenticate decorator.
+
+### TOKEN
+
+`// {encrypted-header}.{encrypted-payload}.{encrypted-signature}` <br/>
+`eyJhbXVCJ9.eyJpZCI6Ij.I3wpRNCH4;`
+
+lb4 model
+  - user
+
+lb4 repository
+lb4 controller    --- criar com a opção Empty
+
+Configurar o @post do user.controller.ts
+Incluir o User em migrate.ts
+Executar:
+  npm run build
+  npm run migrate

@@ -1,0 +1,13 @@
+{
+  "ids": {
+    "Product": 5
+  },
+  "models": {
+    "Product": {
+      "1": "{\"title\":\"Iphone X\",\"qty\":1,\"price\":1000,\"id\":1}",
+      "2": "{\"title\":\"Macbook PRO\",\"qty\":34,\"price\":10000,\"id\":2}",
+      "3": "{\"title\":\"Dell Notebook\",\"qty\":15,\"price\":4500.78,\"id\":3}",
+      "4": "{\"title\":\"Dell Notebook II\",\"qty\":15,\"price\":4500.78,\"id\":4}"
+    }
+  }
+}
