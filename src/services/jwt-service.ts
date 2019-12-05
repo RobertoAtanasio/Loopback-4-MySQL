@@ -3,6 +3,8 @@ import { HttpErrors } from '@loopback/rest';
 import { inject } from '@loopback/core';
 import { Bindings } from '../keys';
 
+import { UserProfile, securityId } from '@loopback/security';
+
 const jwt = require('jsonwebtoken');
 const signAsync = promisify(jwt.sign);
 const verifyAsync = promisify(jwt.verify);
@@ -18,10 +20,10 @@ export class JWTService {
   @inject(Bindings.TOKEN_EXPIRES_IN)
   public readonly jwtExpiresIn: string;
 
-  async generateToken(userProfile: Object): Promise<string> {
+  async generateToken(userProfile: UserProfile): Promise<string> {
     if (!userProfile) {
       throw new HttpErrors.Unauthorized(
-        'Erro ao gerar token: userprofile inválido',
+        'Erro ao gerar token: userProfile inválido',
       );
     }
     let token = '';
@@ -35,26 +37,31 @@ export class JWTService {
     return token;
   }
 
-  async verifyToken(token: string): Promise<Object> {
+  async verifyToken(token: string): Promise<UserProfile> {
     if (!token) {
       throw new HttpErrors.Unauthorized(
-        `Error verifying token : 'token' is null`,
+        `Erro na verificação do Token: 'token' is null`,
       );
     }
-    let userProfile: Object;
+    let userProfile: UserProfile;
     try {
       // decode user profile from token
       const decryptedToken = await verifyAsync(token, this.jwtSecret);
       // don't copy over  token field 'iat' and 'exp', nor 'email' to user profile
       userProfile = Object.assign(
-        { id: '', name: '' },
-        { id: decryptedToken.id, name: decryptedToken.name },
+        { [securityId]: '', name: '' },
+        {
+          [securityId]: decryptedToken.id,
+          name: decryptedToken.name,
+          id: decryptedToken.id,
+        },
       );
     } catch (error) {
       throw new HttpErrors.Unauthorized(
-        `Error verifying token : ${error.message}`,
+        `Error na verificação do token : ${error.message}`,
       );
     }
     return userProfile;
   }
+
 }

@@ -1,5 +1,6 @@
 import { BootMixin } from '@loopback/boot';
 import { ApplicationConfig } from '@loopback/core';
+import { MySequence } from './sequence';
 import {
   RestExplorerBindings,
   RestExplorerComponent,
@@ -8,7 +9,6 @@ import { RepositoryMixin } from '@loopback/repository';
 import { RestApplication } from '@loopback/rest';
 import { ServiceMixin } from '@loopback/service-proxy';
 import * as path from 'path';
-import { MySequence } from './sequence';
 import { BcryptHasher } from './services/hash.password.bcrypt';
 import { MyUserService } from './services/user-service';
 import { JWTService } from './services/jwt-service';
@@ -16,6 +16,13 @@ import {
   Constants,
   Bindings,
 } from './keys';
+
+import {
+  AuthenticationComponent,
+  registerAuthenticationStrategy,
+} from '@loopback/authentication';
+import { JWTStrategy } from './authentication-strategies/jwt-strategy';
+
 
 export class StarterApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
@@ -25,6 +32,12 @@ export class StarterApplication extends BootMixin(
 
     //set up bindings
     this.setupBinding();
+
+    // Bind authentication component related elements
+    this.component(AuthenticationComponent);
+
+    // authentication
+    registerAuthenticationStrategy(this, JWTStrategy);
 
     // Set up the custom sequence
     this.sequence(MySequence);
@@ -49,8 +62,6 @@ export class StarterApplication extends BootMixin(
       },
     };
   }
-
-  // TokenServiceBindings.TOKEN_SERVICE
 
   setupBinding(): void {
     this.bind(Bindings.PASSWORD_HASHER).toClass(BcryptHasher);

@@ -7,6 +7,7 @@ import { BcryptHasher } from './hash.password.bcrypt';
 import { User } from '../models';
 import { HttpErrors } from '@loopback/rest';
 import { Bindings } from '../keys';
+import { UserProfile, securityId } from '@loopback/security';
 
 // 'service.hasher' definido em application.ts função setupBinding
 
@@ -20,6 +21,9 @@ export class MyUserService implements UserService<User, Credentials> {
     public hasher: BcryptHasher,
   ) { }
   async verifyCredentials(credentials: Credentials): Promise<User> {
+
+    //--- Verificar se o usuário existe
+    // const foundUser = await this.getUser(credentials);
 
     //--- Verificar se o usuário existe
     const foundUser = await this.userRepository.findOne({
@@ -43,7 +47,44 @@ export class MyUserService implements UserService<User, Credentials> {
     return foundUser;
   }
 
-  convertToUserProfile(user: User): import("@loopback/security").UserProfile {
-    throw new Error("Method not implemented.");
+  convertToUserProfile(user: User): UserProfile {
+    // since first name and lastName are optional, no error is thrown if not provided
+    let userName = '';
+    if (user.firstName) userName = `${user.firstName}`;
+    if (user.lastName)
+      userName = user.firstName
+        ? `${userName} ${user.lastName}`
+        : `${user.lastName}`;
+    let userProfile: UserProfile;
+    try {
+      userProfile = Object.assign(
+        { [securityId]: '', name: '' },
+        {
+          [securityId]: user.id,
+          name: userName,
+          id: user.id,
+        },
+      );
+    } catch (error) {
+      throw new HttpErrors.Unauthorized(
+        `Error na verificação do token : ${error.message}`,
+      );
+    }
+    return userProfile;
   }
+
+  // async getUser(credentials: Credentials): Promise<User> {
+  //   //--- Verificar se o usuário existe
+  //   const foundUser = await this.userRepository.findOne({
+  //     where: {
+  //       email: credentials.email,
+  //     },
+  //   });
+  //   if (!foundUser) {
+  //     throw new HttpErrors.NotFound(
+  //       `Usuário não encontrado com este email: ${credentials.email}`,
+  //     );
+  //   }
+  //   return foundUser;
+  // }
 }

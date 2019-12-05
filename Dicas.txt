@@ -163,12 +163,35 @@ Creating JSON Web TOKEN
 -----------------------
 
 1. Instalar: npm i jsonwebtoken --save
-2. Criar o arquivo jwt-service.ts
+2. Criar o arquivo jwt-service.ts, onde será utilizado as funcionalidades
+   de geração e validação do token
 3. Configurado o application.ts com os bind
     this.bind('services.jwt.service').toClass(JWTService);
     this.bind('authentication.jwt.secret').to('123asdf5');
     this.bind('authentication.jwt.expiresIn').to('7h');
+    * ver o arquivo keys.ts com as novas configurações
 4. Criar o arquivo src/keys.ts
+
+5. Para a validação do JWT, incluir em sequence.ts:
+    @inject(AuthenticationBindings.AUTH_ACTION)
+    protected authenticateRequest: AuthenticateFn,
+6. Incluir a action do JWT em sequence.ts:
+    //call authentication action
+    await this.authenticateRequest(request);
+7. E no catch, icnluir:
+    if (
+      error.code === AUTHENTICATION_STRATEGY_NOT_FOUND ||
+      error.code === USER_PROFILE_NOT_FOUND
+    ) {
+      Object.assign(error, {statusCode: 401 /* Unauthorized */});
+    }
+    Obs.: tudo com as devidas importações.
+
+8. Criar o folder: authentication-strategies
+9. Criar o arquivo: authentication-strategies/jwt-strategy.ts onde será
+   checada as estratégias de autenticação
+10. Configurar application.ts
+11. jwt-service.ts está a configuração do verifyToken e generateToken
 ===============================================================================
 
 ## What is dependency Injection?

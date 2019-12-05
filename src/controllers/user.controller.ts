@@ -4,7 +4,8 @@ import {
   post,
   requestBody,
   getJsonSchemaRef,
-  getModelSchemaRef
+  getModelSchemaRef,
+  HttpErrors
 } from '@loopback/rest';
 import { User } from '../models';
 import { UserRepository, Credentials } from '../repositories/user.repository';
@@ -15,6 +16,9 @@ import { CredentialsRequestBody } from './specs/user.controller.spec';
 import { MyUserService } from '../services/user-service';
 import { JWTService } from '../services/jwt-service';
 import { Bindings } from '../keys';
+import { get } from '@loopback/rest';
+import { UserProfile, securityId } from '@loopback/security';
+import { authenticate, AuthenticationBindings } from '@loopback/authentication';
 
 // o @inject abaixo está definido em application.ts
 
@@ -92,21 +96,43 @@ export class UserController {
   ): Promise<{ token: string }> {
     // make sure user exist, password should be valid
     const user = await this.userService.verifyCredentials(credentials);
-
-    let userName = '';
-    if (user.firstName) {
-      userName = user.firstName;
-    }
-    if (user.lastName) {
-      userName = user.firstName
-        ? `${user.firstName} ${user.lastName}`
-        : user.lastName;
-    }
-    const userProfile = { id: `${user.id}`, name: userName };
-
+    const userProfile = this.userService.convertToUserProfile(user);
     const token = await this.jwtService.generateToken(userProfile);
-
     return Promise.resolve({ token });
   }
 
+  // @get('/users/me')
+  // @authenticate('jwt')
+  // async me(
+  //   @inject(AuthenticationBindings.CURRENT_USER)
+  //   currentUser: UserProfile,
+  // ): Promise<UserProfile> {
+  //   let userProfile: UserProfile;
+  //   try {
+  //     userProfile = Object.assign(
+  //       { [securityId]: '', name: '' },
+  //       {
+  //         [securityId]: 1,
+  //         name: 'Haider Malik',
+  //         id: 1,
+  //       },
+  //     );
+  //   } catch (error) {
+  //     throw new HttpErrors.Unauthorized(
+  //       `Error na verificação do token : ${error.message}`,
+  //     );
+  //   }
+  //   return Promise.resolve(userProfile);
+  // }
+
+  //--- obtendo o usuário corrente
+
+  @get('/users/me')
+  @authenticate('jwt')
+  async me(
+    @inject(AuthenticationBindings.CURRENT_USER)
+    currentUser: UserProfile,
+  ): Promise<UserProfile> {
+    return Promise.resolve(currentUser);
+  }
 }
