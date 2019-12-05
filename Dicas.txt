@@ -122,3 +122,131 @@ Incluir o User em migrate.ts
 Executar:
   npm run build
   npm run migrate
+
+Na tabela user no MySQL, criar o índice:
+  ALTER TABLE lb_demo_db.user ADD UNIQUE INDEX userIndex (email);
+
+Instalar: npm i email-validator --save
+
+Importar em validator.ts: import * as EmailValidator from 'email-validator';
+
+Exportar em user.repository:
+  export type Credentials = {
+    email: string;
+    password: string;
+  };
+
+Para encriptografar a senha:
+
+  npm install bcryptjs @types/bcryptjs --save
+
+===============================================================================
+
+Creating login route
+--------------------
+
+1. Criar folder: specs dentro do folder controllers
+2. Criar arquivo: user.controller.spec.ts que será utilizado no
+   @requestBody(CredentialsRequestBody) do async login em user.controller.ts
+
+===============================================================================
+
+Varify User Credentials while login
+-----------------------------------
+
+1. Criar arquivo services/user-service.ts
+2. instalar: npm install @loopback/authentication --save
+
+===============================================================================
+
+Creating JSON Web TOKEN
+-----------------------
+
+1. Instalar: npm i jsonwebtoken --save
+2. Criar o arquivo jwt-service.ts
+3. Configurado o application.ts com os bind
+    this.bind('services.jwt.service').toClass(JWTService);
+    this.bind('authentication.jwt.secret').to('123asdf5');
+    this.bind('authentication.jwt.expiresIn').to('7h');
+4. Criar o arquivo src/keys.ts
+===============================================================================
+
+## What is dependency Injection?
+
+- Dependency injection is a technique whereby one object supplies the
+  dependencies of another object. A "dependency" is an object that can be used,
+  for example as a service.
+
+- Before we can use methods of other classes, we first need to create the
+  object of that class (i.e. class A needs to create an instance of class B).
+
+- Dependency Injection is a set of software design principles and patterns
+  that enables you to develop loosely coupled code.
+
+```ts
+class Person {
+  serice: Service;
+  constructor() {
+    this.service = new Service();
+  }
+}
+```
+
+### Why do we need Dependency Injection?
+
+- Inversion of Control
+- Classes should configure its dependencies from the outside
+- It allows you to reusing the classes
+- Testing the classes independentaly from other classes
+
+### LoopBack supports three kinds of dependency injection:
+
+**constructor injection:** the dependencies are provided as arguments of the
+  class constructor. <br>
+
+```ts
+class ProductController {
+  constructor(@inject('repositories.Product') repo) {
+    this.repo = repo;
+  }
+
+  async list() {
+    return await this.repo.find({where: {available: true}});
+  }
+}
+```
+
+**property injection:** the dependencies are stored in instance properties
+  after the class was constructed. <br>
+
+```ts
+class InfoController {
+  @inject('logger', {optional: true})
+  private logger = ConsoleLogger();
+
+  status() {
+    this.logger.info('Status endpoint accessed.');
+    return {pid: process.pid};
+  }
+}
+```
+
+** method injection:** the dependencies are provided as arguments of a method
+** invocation. Please note that constructor injection is a special form of
+** method injection to instantiate a class by calling its constructor.
+
+```ts
+class InfoController {
+  greet(@inject(AuthenticationBindings.CURRENT_USER) user: UserProfile) {
+    return `Hello, ${user.name}`;
+  }
+}
+```
+
+```ts
+const context = {
+  config: [],
+  'service.hasher': BcyrptHasher,
+  round: 10,
+};
+```

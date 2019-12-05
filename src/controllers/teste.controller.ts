@@ -17,20 +17,20 @@ import {
   del,
   requestBody,
 } from '@loopback/rest';
-import {Teste} from '../models';
-import {TesteRepository} from '../repositories';
+import { Teste } from '../models';
+import { TesteRepository } from '../repositories';
 
 export class TesteController {
   constructor(
     @repository(TesteRepository)
-    public testeRepository : TesteRepository,
-  ) {}
+    public testeRepository: TesteRepository,
+  ) { }
 
   @post('/teste', {
     responses: {
       '200': {
         description: 'Teste model instance',
-        content: {'application/json': {schema: getModelSchemaRef(Teste)}},
+        content: { 'application/json': { schema: getModelSchemaRef(Teste) } },
       },
     },
   })
@@ -40,7 +40,7 @@ export class TesteController {
         'application/json': {
           schema: getModelSchemaRef(Teste, {
             title: 'NewTeste',
-            
+
           }),
         },
       },
@@ -54,7 +54,7 @@ export class TesteController {
     responses: {
       '200': {
         description: 'Teste model count',
-        content: {'application/json': {schema: CountSchema}},
+        content: { 'application/json': { schema: CountSchema } },
       },
     },
   })
@@ -72,7 +72,7 @@ export class TesteController {
           'application/json': {
             schema: {
               type: 'array',
-              items: getModelSchemaRef(Teste, {includeRelations: true}),
+              items: getModelSchemaRef(Teste, { includeRelations: true }),
             },
           },
         },
@@ -89,7 +89,7 @@ export class TesteController {
     responses: {
       '200': {
         description: 'Teste PATCH success count',
-        content: {'application/json': {schema: CountSchema}},
+        content: { 'application/json': { schema: CountSchema } },
       },
     },
   })
@@ -97,7 +97,7 @@ export class TesteController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Teste, {partial: true}),
+          schema: getModelSchemaRef(Teste, { partial: true }),
         },
       },
     })
@@ -113,7 +113,7 @@ export class TesteController {
         description: 'Teste model instance',
         content: {
           'application/json': {
-            schema: getModelSchemaRef(Teste, {includeRelations: true}),
+            schema: getModelSchemaRef(Teste, { includeRelations: true }),
           },
         },
       },
@@ -124,6 +124,24 @@ export class TesteController {
     @param.query.object('filter', getFilterSchemaFor(Teste)) filter?: Filter<Teste>
   ): Promise<Teste> {
     return this.testeRepository.findById(id, filter);
+  }
+
+  @get('/teste/{email}/email', {
+    responses: {
+      '200': {
+        description: 'Teste model instance',
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(Teste),
+          },
+        },
+      },
+    },
+  })
+  async findByEmail(
+    @param.path.string('email') email: string
+  ): Promise<Teste[]> {
+    return this.testeRepository.find({ where: { email: email } });
   }
 
   @patch('/teste/{id}', {
@@ -138,7 +156,7 @@ export class TesteController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Teste, {partial: true}),
+          schema: getModelSchemaRef(Teste, { partial: true }),
         },
       },
     })
