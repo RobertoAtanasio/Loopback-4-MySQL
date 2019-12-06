@@ -6,3 +6,4 @@ export * from './address.model';
 export * from './user.model';
 export * from './teste.model';
 export * from './job.model';
+export * from './company.model';

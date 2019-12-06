@@ -257,6 +257,124 @@ Criando Admin Role com as permissões
 14. Instalar: npm install --save-dev @loopback/testlab
 ===============================================================================
 
+Conectando LoopBack 4 com MongoDB
+---------------------------------
+
+1. lb4 datasource
+
+  Exemplo da saída do processo de criação:
+
+  C:\Loopback\lb-prod>lb4 datasource
+  ? Datasource name: mongods
+  ? Select the connector for mongods: MongoDB (supported by StrongLoop)
+  ? Connection String url to override other settings
+    (eg: mongodb://username:password@hostname:port/database):
+  ? host: 127.0.0.1
+  ? port: 27017
+  ? user:
+  ? password: [hidden]
+  ? database: lb4-demo
+  ? Feature supported by MongoDB v3.1.0 and above: Yes
+    create src\datasources\mongods.datasource.config.json
+    create src\datasources\mongods.datasource.ts
+  npm WARN lb-prod@1.0.0 No license field.
+
+  + loopback-connector-mongodb@4.2.0
+  added 9 packages from 13 contributors and audited 5175 packages in 6.259s
+  found 0 vulnerabilities
+
+    update src\datasources\index.ts
+
+  Datasource Mongods was created in src\datasources/
+
+2. lb4 model
+    - Company
+    - entity
+    - id number pk
+    - name string required
+
+3. lb4 repository
+    - mongodsDatasource
+    - Company
+
+4. lb4 controller
+    - Company
+    - Rest Controller
+    - /companies
+
+5. Obs.: antes de rodar a apliacação, lembrar de inicializar o mongodb:
+    - Executar mongod
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+COMANDOS MONGODB:
+
+C:\mongo\bin> mongod --dbpath C:\mongo\data
+c:\mongo\bin> mongo
+
+show databases
+use workshop
+show collections
+
+db.customers.insert({ nome: "Luiz", idade: 29 })
+db.customers.find()
+
+custArray = [{ nome : "Fernando", idade : 29 }, { nome : "Teste", "uf" : "RS" }]
+db.customers.insert(custArray)
+db.customers.find()
+
+db.customers.find().pretty()
+db.getCollection("customers").find({}).pretty();
+
+db.customers.find({uf: "RS"})									--> listar documentos com uf = 'RS'
+
+db.customers.find({nome: { $regex: /a/ }})						--> listar documentos que têm a letra 'a'
+
+db.customers.find({idade: {$gte: 18}})							--> listar documentos com idade >= 18
+db.customers.find({nome: "Luiz", idade: {$gte: 18}})
+db.customers.find({nome: { $regex: /a/ }, idade: {$gte: 18}})
+
+Outros operadores que você pode usar junto ao filtro do find são:
+	$e: 	exatamente igual (=)
+	$ne: 	diferente (<> ou !=)
+	$gt: 	maior do que (>)
+	$lt: 	menor do que (<)
+	$lte: 	menor ou igual a (<=)
+	$in: 	o valor está contido em um array de possibilidades, como em um OU. Ex: {idade: {$in: [10,12] }}
+	$all: 	MongoDB permite campos com arrays. Ex: { tags: ["NodeJS", "MongoDB"] }. Com esse operador,
+			você compara se seu campo multivalorado possui todos os valores de um array específico.
+			Ex: {tags: {$all: ["NodeJS", "Android"]}}
+
+
+Duarte, Luiz. Node.js e Microservices: Um Guia Prático . LuizTools. Edição do Kindle.
+
+db.customers.find().skip(1).limit(10)							--> retorna 10 itens e ignora o primeiro
+
+db.customers.find().sort({idade: 1})							--> ordena pela idade (1 = asc; -1 desc)
+
+db.customers.updateOne({_id: ObjectId("59ab46e433959e2724be2cbd")}, {$set: {idade: 28}})
+																--> pesquisa peli id e atualiza apenas a idade
+																--> note que usei uma função ObjectId para converter,
+																	pois esse valor não é uma string.
+																--> pode-se usar null para limpar um campo
+
+Outros operadores com update:
+	$unset: 	remove o respectivo campo do documento;
+	$inc: 		incrementa o valor original do campo com o valor especificado;
+	$mul: 		multiplica o valor original do campo com o valor especificado;
+	$rename: 	muda o nome do campo para o nome especificado;
+
+
+db.customers.updateOne({nome: "LuizTools"}, {nome: "LuizTools", uf: "RS"}, {upsert: true})
+
+--> Um upsert é um update como qualquer outro, ou seja, vai atualizar o documento que atender ao filtro passado
+	como primeiro parâmetro, porém, se não existir nenhum documento com o respectivo filtro, ele será inserido,
+	como se fosse um insert.
+
+db.customers.delete({nome: "Luiz"})		--> exclcuir nome = "Luiz"
+
+===============================================================================
+
 ## What is dependency Injection?
 
 - Dependency injection is a technique whereby one object supplies the

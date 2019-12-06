@@ -6,3 +6,4 @@ export * from './address.repository';
 export * from './user.repository';
 export * from './teste.repository';
 export * from './job.repository';
+export * from './company.repository';

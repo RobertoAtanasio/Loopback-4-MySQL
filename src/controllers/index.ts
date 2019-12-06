@@ -12,3 +12,4 @@ export * from './user.controller';
 export * from './teste.controller';
 export * from './admin.controller';
 export * from './job.controller';
+export * from './company.controller';
