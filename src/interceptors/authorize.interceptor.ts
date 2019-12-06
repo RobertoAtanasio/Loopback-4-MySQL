@@ -57,11 +57,8 @@ export class AuthorizeInterceptor implements Provider<Interceptor> {
 
     // eslint-disable-next-line no-useless-catch
     try {
-      //  Add pre-invocation logic here
-      console.log('Log from authorize global interceptor');
-      console.log('Metadata', this.metadata);
       /**
-       * Exemplo do this.metadata acima:
+       * Exemplo do this.metadata:
        * { strategy: 'jwt', options: { required: [ 'CreateJob' ] } }
        */
 
@@ -76,11 +73,8 @@ export class AuthorizeInterceptor implements Provider<Interceptor> {
        * Exemplo do requiredPermissions acima:
        * { required: [ 'CreateJob' ] }
        */
-      console.log('requiredPermissions', requiredPermissions);
 
       const user = await this.getCurrentUser();
-      console.log('User: ', user);
-      console.log('User Permissions: ', user.permissions);
 
       /*
       Exemplo dos displays de:
@@ -110,7 +104,6 @@ export class AuthorizeInterceptor implements Provider<Interceptor> {
         throw new HttpErrors.Forbidden('Permissão de Acesso Inválida.');
       }
 
-      console.log('results', results);
       // Add post-invocation logic here
       return result;
     } catch (err) {

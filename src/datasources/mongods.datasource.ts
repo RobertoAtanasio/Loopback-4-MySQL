@@ -4,8 +4,9 @@ import {
   LifeCycleObserver,
   ValueOrPromise,
 } from '@loopback/core';
-import {juggler} from '@loopback/repository';
+import { juggler } from '@loopback/repository';
 import * as config from './mongods.datasource.config.json';
+// import { Configuracao } from './configMongoDb';
 
 @lifeCycleObserver('datasource')
 export class MongodsDataSource extends juggler.DataSource
@@ -13,8 +14,9 @@ export class MongodsDataSource extends juggler.DataSource
   static dataSourceName = 'mongods';
 
   constructor(
-    @inject('datasources.config.mongods', {optional: true})
+    @inject('datasources.config.mongods', { optional: true, option: { useUnifiedTopology: true } })
     dsConfig: object = config,
+    // dsConfig: object = Configuracao.ConfigMongoDbAtlas,
   ) {
     super(dsConfig);
   }

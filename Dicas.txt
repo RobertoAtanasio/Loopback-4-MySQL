@@ -305,6 +305,21 @@ Conectando LoopBack 4 com MongoDB
 5. Obs.: antes de rodar a apliacação, lembrar de inicializar o mongodb:
     - Executar mongod
 
+export namespace Configuracao {
+  export const ConfigMongoDbAtlas =
+  {
+    name: "mongods",
+    connector: "mongodb",
+    url: "mongodb+srv://usuario_admin:egito001@clusterapi-hto5v.mongodb.net/test?retryWrites=true&w=majority",
+    host: "clusterapi-hto5v.mongodb.net/test",
+    user: "usuario_admin",
+    password: ".....",    a de sempre terminadada 001 com inicial minúscula e sem ponto
+    database: "mongodb+srv",
+    useNewUrlParser: true
+  }
+}
+
+
 ----------------------------------------------------------------------------------------------------------------------------------
 
 COMANDOS MONGODB:
