@@ -1,4 +1,4 @@
-import {Entity, model, property} from '@loopback/repository';
+import { Entity, model, property } from '@loopback/repository';
 
 @model()
 export class User extends Entity {
@@ -32,6 +32,8 @@ export class User extends Entity {
   })
   lastName?: string;
 
+  @property.array(String)
+  permissions: String[];
 
   constructor(data?: Partial<User>) {
     super(data);

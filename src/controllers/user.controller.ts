@@ -5,7 +5,6 @@ import {
   requestBody,
   getJsonSchemaRef,
   getModelSchemaRef,
-  HttpErrors
 } from '@loopback/rest';
 import { User } from '../models';
 import { UserRepository, Credentials } from '../repositories/user.repository';
@@ -17,8 +16,9 @@ import { MyUserService } from '../services/user-service';
 import { JWTService } from '../services/jwt-service';
 import { Bindings } from '../keys';
 import { get } from '@loopback/rest';
-import { UserProfile, securityId } from '@loopback/security';
+import { UserProfile } from '@loopback/security';
 import { authenticate, AuthenticationBindings } from '@loopback/authentication';
+import { PermissionKeys } from '../authorization/permission-keys';
 
 // o @inject abaixo está definido em application.ts
 
@@ -61,6 +61,8 @@ export class UserController {
 
     validateCredentials(userData);
 
+    userData.permissions = [PermissionKeys.AccessAuthFeature];
+
     //--- Método definido em: hash.password.bycrypt.ts
     const passw = await this.hasher.hashPassword(userData.password);
     userData.password = passw;
@@ -96,7 +98,9 @@ export class UserController {
   ): Promise<{ token: string }> {
     // make sure user exist, password should be valid
     const user = await this.userService.verifyCredentials(credentials);
+    console.log('..user login', user);
     const userProfile = this.userService.convertToUserProfile(user);
+    console.log('..userProfile login', userProfile);
     const token = await this.jwtService.generateToken(userProfile);
     return Promise.resolve({ token });
   }

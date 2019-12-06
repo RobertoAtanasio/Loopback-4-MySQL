@@ -1,4 +1,3 @@
-
 import { UserService } from '@loopback/authentication';
 import { repository } from '@loopback/repository';
 import { UserRepository, Credentials } from '../repositories';
@@ -47,8 +46,30 @@ export class MyUserService implements UserService<User, Credentials> {
     return foundUser;
   }
 
+  // convertToUserProfile(user: User): MyUserProfile {
+  //   // since first name and lastName are optional, no error is thrown if not provided
+  //   let userName = '';
+  //   if (user.firstName) userName = `${user.firstName}`;
+  //   if (user.lastName)
+  //     userName = user.firstName
+  //       ? `${userName} ${user.lastName}`
+  //       : `${user.lastName}`;
+
+  //   const currentUser: MyUserProfile = pick(JSON.parse(JSON.stringify(user)), [
+  //     'id',
+  //     'permissions',
+  //   ]) as MyUserProfile;
+  //   currentUser.name = userName;
+  //   return currentUser;
+  // }
+
+
+
   convertToUserProfile(user: User): UserProfile {
     // since first name and lastName are optional, no error is thrown if not provided
+
+    console.log('..user convertToUserProfile', user);
+
     let userName = '';
     if (user.firstName) userName = `${user.firstName}`;
     if (user.lastName)
@@ -58,11 +79,12 @@ export class MyUserService implements UserService<User, Credentials> {
     let userProfile: UserProfile;
     try {
       userProfile = Object.assign(
-        { [securityId]: '', name: '' },
+        { [securityId]: '', name: '', permissitions: [] },
         {
           [securityId]: user.id,
           name: userName,
           id: user.id,
+          permissions: user.permissions
         },
       );
     } catch (error) {

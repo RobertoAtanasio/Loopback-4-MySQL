@@ -194,6 +194,69 @@ Creating JSON Web TOKEN
 11. jwt-service.ts está a configuração do verifyToken e generateToken
 ===============================================================================
 
+Criando Admin Role com as permissões
+------------------------------------
+
+1. Alterar user.models.ts e incluir:
+    @property.array(String)
+    permissions: String[];
+2. executar para incluir as permissões:
+    npm run build
+    npm run migrate
+
+3. Criar um novo controller vazio para o usuário Admin
+    lb4 controller
+
+4. Criar pasta: authorization
+5. Criar arquivo: authorization/permission-keys.ts
+
+5. Criado novo entry point: Job (nova entity comRest Controller)
+    lb4 model
+    lb4 repository
+    lb4 controller
+6. Incluir em migrate.ts
+7. executar:
+    npm run build
+    npm run migrate
+
+8. Criar os Interceptors
+    lb4 interceptor
+
+    obs.: o sistema irá criar os arquivos: authorize.interceptor.ts e index.ts
+
+    Exemplo da execução:
+    C:\Loopback\lb-prod>lb4 interceptor
+    ? Interceptor name: authorize
+    ? Is it a global interceptor? Yes
+
+    Global interceptors are sorted by the order of an array of group names
+    bound to ContextBindings.GLOBAL_INTERCEPTOR_ORDERED_GROUPS.
+    See https://loopback.io/doc/en/lb4/Interceptors.html#order-of-invocation-for-interceptors.
+
+    ? Group name for the global interceptor: ('')
+      create src\interceptors\authorize.interceptor.ts
+      update src\interceptors\index.ts
+
+    Interceptor Authorize was created in src\interceptors/
+
+    C:\Loopback\lb-prod>
+
+9. Criar o arquivo src/types.ts
+10. incluir as chamadas da autenticação no métodos desejados
+    Exemplo: em job.controller.ts
+    @authenticate('jwt', {required: [PermissionKeys.CreateJob]})
+    async create(
+
+11. Incluir as permissões em jwt-service.ts
+    userProfile = Object.assign(
+        { [securityId]: '', name: '', permissions: [] },
+        :
+        :
+12. Instalar: npm install --save @types/lodash
+13. Criar a interface MyUserProfile em types.ts
+14. Instalar: npm install --save-dev @loopback/testlab
+===============================================================================
+
 ## What is dependency Injection?
 
 - Dependency injection is a technique whereby one object supplies the
